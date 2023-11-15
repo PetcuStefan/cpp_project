@@ -1,5 +1,18 @@
 #include<iostream>
+#include<string>
+#define _CRT_SECURE_NO_WARNINGS
 using namespace std;
+class location
+{
+private:
+	int noRows;
+	int noSeats;
+	int zones;
+public:
+
+
+
+};
 class event
 {
 private:
@@ -28,11 +41,25 @@ public:
 	}
 	void setHour(int hour)
 	{
-		this->hour = hour;
+		if (hour >= 0 && hour < 24)
+		{
+			this->hour = hour;
+		}
+		else
+		{
+			throw exception{ "Wrong hour!!" };
+		}
 	}
 	void setMinutes(int minutes)
 	{
-		this->minutes = minutes;
+		if (minutes >= 0 && minutes < 24)
+		{
+			this->minutes = minutes;
+		}
+		else
+		{
+			throw exception{ "Wrong number of minutes!!" };
+		}
 	}
 	char* getEventName()
 	{
@@ -64,6 +91,6 @@ public:
 int main()
 {
 	event ceva;
-	cout << ceva.getHour;
+	cout << ceva.getHour();
 	return 0;
 }
