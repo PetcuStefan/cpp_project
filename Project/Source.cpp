@@ -1,43 +1,46 @@
 #include<iostream>
 #include<string>
-#define _CRT_SECURE_NO_WARNINGS
 using namespace std;
-class location
-{
-private:
-	int noRows;
-	int noSeats;
-	int zones;
-public:
-
-
-
-};
 class event
 {
 private:
-	char* eventName = new char[20];
-	char* address = new char[40];
+	char* eventName;
+	char address[40];
 	int hour;
 	int minutes;
 
 public:
-	event()
+	event(const char* eventName)
 	{
-		eventName = nullptr;
-		address = nullptr;
-		hour = -1;
-		minutes = -1;
+		this->eventName = new char[strlen(eventName) + 1];
+		strcpy_s(this->eventName, strlen(eventName) + 1, eventName);
+		strcpy_s(this->address, 4, "n/a");
+		this->hour = -1;
+		this->minutes = -1;
+	}
+	event(const char* eventName, const char* address, int hour, int minutes)
+	{
+		this->eventName = new char[strlen(eventName) + 1];
+		strcpy_s(this->eventName, strlen(eventName) + 1, eventName);
+		strcpy_s(this->address, strlen(address)+1, address);
+		this->hour = hour;
+		this->minutes = minutes;
 	}
 
-	void setEventName(char *newEventName)
+	void setEventName(const char *newEventName)
 	{
-		strcpy(this->eventName, newEventName);
+		if (this->eventName != nullptr)
+		{
+			delete[] eventName;
+			this->eventName = nullptr;
+		}
+		this->eventName = new char[strlen(newEventName) + 1];
+		strcpy_s(this->eventName,strlen(newEventName)+1, newEventName);
 	}
 
 	void setAddress(char *newAddress)
 	{
-		strcpy(this->address, newAddress);
+		strcpy_s(this->address,39, newAddress);
 	}
 	void setHour(int hour)
 	{
@@ -63,14 +66,14 @@ public:
 	}
 	char* getEventName()
 	{
-		char *copyEventName=new char[strlen(this->eventName)];
-		strcpy(copyEventName, this->eventName);
+		char *copyEventName=new char[strlen(this->eventName)+1];
+		strcpy_s(copyEventName,strlen(this->eventName)+1, this->eventName);
 		return copyEventName;
 	}
 	char* getAddress()
 	{
-		char* copyAddress = new char[strlen(this->address)];
-		strcpy(copyAddress, this->address);
+		char* copyAddress = new char[strlen(this->address)+1];
+		strcpy_s(copyAddress,strlen(this->address)+1, this->address);
 		return copyAddress;
 	}
 	int getHour()
@@ -85,12 +88,16 @@ public:
 	{
 		cout << endl << "Destr" << endl;
 		delete[] eventName;
-		delete[] address;
 	}
 };
 int main()
 {
-	event ceva;
-	cout << ceva.getHour();
+	char* p = new char[30];
+	char* add = new char[30];
+	strcpy_s(add, 29, "str Mihail Sebastian");
+	strcpy_s(p, 12, "bling blong");
+	event ceva(p,add,12,03);
+	cout << ceva.getEventName() << endl << ceva.getAddress() << endl << ceva.getHour() << ':' << ceva.getMinutes();
+
 	return 0;
 }
