@@ -10,6 +10,7 @@ private:
 	int minutes;
 
 public:
+	//constr
 	event(const char* eventName)
 	{
 		this->eventName = new char[strlen(eventName) + 1];
@@ -26,7 +27,44 @@ public:
 		this->hour = hour;
 		this->minutes = minutes;
 	}
+	//copy-constr
+	event(const event& a)
+	{
+		if (a.eventName != nullptr)
+		{
+			this->eventName = new char[strlen(a.eventName) + 1];
+			strcpy_s(this->eventName, strlen(a.eventName) + 1, a.eventName);
 
+		}
+		if (a.address != nullptr)
+		{
+			strcpy_s(this->address, strlen(a.address) + 1, a.address);
+		}
+		this->hour = a.hour;
+		this->minutes = a.minutes;
+	}
+	//op=
+	event& operator=(const event& a)
+	{
+		if (a.eventName != nullptr)
+		{
+			if (this->eventName != nullptr)
+			{
+				delete[] eventName;
+				this->eventName = nullptr;
+			}
+			this->eventName = new char[strlen(a.eventName) + 1];
+			strcpy_s(this->eventName, strlen(a.eventName) + 1, a.eventName);
+
+		}
+		if (a.address != nullptr)
+		{
+			strcpy_s(this->address, strlen(a.address) + 1, a.address);
+		}
+		this->hour = a.hour;
+		this->minutes = a.minutes;
+		return *this;
+	}
 	void setEventName(const char *newEventName)
 	{
 		if (this->eventName != nullptr)
@@ -37,7 +75,6 @@ public:
 		this->eventName = new char[strlen(newEventName) + 1];
 		strcpy_s(this->eventName,strlen(newEventName)+1, newEventName);
 	}
-
 	void setAddress(char *newAddress)
 	{
 		strcpy_s(this->address,39, newAddress);
@@ -84,6 +121,7 @@ public:
 	{
 		return this->minutes;
 	}
+	//destr
 	~event()
 	{
 		cout << endl << "Destr" << endl;
@@ -92,12 +130,14 @@ public:
 };
 int main()
 {
-	char* p = new char[30];
-	char* add = new char[30];
-	strcpy_s(add, 29, "str Mihail Sebastian");
-	strcpy_s(p, 12, "bling blong");
-	event ceva(p,add,12,03);
+	char* p1 = new char[30];
+	char* p2 = new char[30];
+	strcpy_s(p2, 29, "str Mihail Sebastian");
+	strcpy_s(p1, 12, "bling blong");
+	event ceva(p1,p1,22,11);
 	cout << ceva.getEventName() << endl << ceva.getAddress() << endl << ceva.getHour() << ':' << ceva.getMinutes();
-
+	event ceva2(p2,p2,13,10);
+	ceva2 = ceva;
+	cout << ceva2.getEventName() << endl << ceva2.getAddress() << endl << ceva2.getHour() << ':' << ceva2.getMinutes();
 	return 0;
 }
