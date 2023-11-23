@@ -251,6 +251,31 @@ public:
 			strcpy_s(this->name, strlen(a.name) + 1, a.name);
 		}
 	}
+	location& operator=(const location& a)
+	{
+		this->maxSeats = a.maxSeats;
+		this->noRows = a.noRows;
+		strcpy_s(this->zone, strlen(a.zone) + 1, a.zone);
+		if (a.name != nullptr)
+		{
+			if (this->name != nullptr)
+			{
+				delete[] this->name;
+				this->name = nullptr;
+			}
+			name = new char[strlen(a.name) + 1];
+			strcpy_s(this->name, strlen(a.name) + 1, a.name);
+		}
+		return *this;
+	}
+	~location()
+	{
+		if (this->name != nullptr)
+		{
+			delete[] this->name;
+			this->name = nullptr;
+		}
+	}
 };
 int main()
 {
