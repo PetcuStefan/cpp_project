@@ -11,14 +11,22 @@ private:
 	bool isOutdoors;
 
 public:
+	event()
+	{
+		this->eventName = nullptr;
+		strcpy_s(this->address, 4, "n/a");
+		this->hour = 0;
+		this->minutes = 0;
+		this->isOutdoors = false;
+	}
 	//constr
 	event(const char* eventName)
 	{
 		this->eventName = new char[strlen(eventName) + 1];
 		strcpy_s(this->eventName, strlen(eventName) + 1, eventName);
 		strcpy_s(this->address, 4, "n/a");
-		this->hour = -1;
-		this->minutes = -1;
+		this->hour = 0;
+		this->minutes = 0;
 		this->isOutdoors = false;
 	}
 	event(const char* eventName, const char* address, int hour, int minutes, bool isOutdoors)
@@ -87,7 +95,7 @@ public:
 	}
 	void setHour(int hour)
 	{
-		if (hour >= 0 && hour < 24)
+		if (hour >= 0)
 		{
 			this->hour = hour;
 		}
@@ -98,7 +106,7 @@ public:
 	}
 	void setMinutes(int minutes)
 	{
-		if (minutes >= 0 && minutes < 24)
+		if (minutes >= 0 && minutes < 60)
 		{
 			this->minutes = minutes;
 		}
@@ -140,12 +148,14 @@ public:
 	{
 		return this->isOutdoors;
 	}
+	//op!
 	bool operator!()
 	{
 		bool copy;
 		copy = !this->isOutdoors;
 		return copy;
 	}
+	//op[]
 	char operator[](int index)
 	{
 		if (index<0 || index>strlen(this->eventName))
@@ -154,14 +164,30 @@ public:
 		}
 		return this->eventName[index];
 	}
+	//op+
+	event operator+ (int value)
+	{
+		event copy;
+		copy = *this;
+		copy.minutes += value;
+		if (copy.minutes >= 60)
+		{
+			copy.hour++;
+			copy.minutes -= 60;
+		}
+		return copy;
+	}
 	//destr
 	~event()
 	{
-		cout << endl << "Destr" << endl;
 		delete[] this->eventName;
 		this->eventName = nullptr;
 	}
 };
+event operator+ (int value, event a)
+{
+	return a + value;
+}
 class location
 {
 private:
@@ -345,6 +371,12 @@ public:
 int main()
 {
 	char* p1 = new char[30];
+	strcpy_s(p1, 4, "abc");
 	char* p2 = new char[30];
+	event ceva(p1);
+	ceva.setHour(2);
+	ceva.setMinutes(20);
+	ceva = 40 + ceva;
+	cout <<ceva.getHour()<<':'<< ceva.getMinutes();
 	return 0;
 }
