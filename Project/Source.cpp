@@ -128,6 +128,128 @@ public:
 		delete[] eventName;
 	}
 };
+class location
+{
+private:
+	const int id;
+	int maxSeats;
+	int noRows;
+	char zone[10];
+	char* name;
+	static int noLocations;
+public:
+	//setters
+	void setMaxSeats(int maxSeats)
+	{
+		if (maxSeats < 0)
+		{
+			throw exception("No of max seats cannot be less than 0");
+		}
+		else
+		{
+			this->maxSeats = maxSeats;
+		}
+	}
+	void setNoRows(int noRows)
+	{
+		if (noRows < 0)
+		{
+			throw exception("No of rows cannot be less than 0");
+		}
+		else
+		{
+			this->noRows = noRows;
+		}
+	}
+	void setZone(const char* zone)
+	{
+		strcpy_s(this->zone, 9, zone);
+	}
+	void setName(const char* name)
+	{
+		if (name != nullptr)
+		{
+			if (this->name != nullptr)
+			{
+				delete[] this->name;
+				this->name = nullptr;
+			}
+			this->name = new char[strlen(name) + 1];
+			strcpy_s(this->name, strlen(name) + 1, name);
+		}
+	}
+	//getters
+	int getId()
+	{
+		return id;
+	}
+	int getMaxSeats()
+	{
+		return maxSeats;
+	}
+	int getNoRows()
+	{
+		return noRows;
+	}
+	char* getZone()
+	{
+		char* copy = new char[strlen(this->zone)+1];
+		strcpy_s(copy, strlen(this->zone) + 1, this->zone);
+		return copy;
+	}
+	char* getName()
+	{
+		char* copy = new char[strlen(this->name) + 1];
+		strcpy_s(copy, strlen(this->name) + 1, this->name);
+		return copy;
+	}
+	//constr1
+	location(const char* name) :id(++noLocations)
+	{
+		this->maxSeats = 0;
+		this->noRows = 0;
+		strcpy_s(this->zone, 4, "n/a");
+		if (name != nullptr)
+		{
+			this->name = new char[strlen(name) + 1];
+			strcpy_s(this->name, strlen(name) + 1, name);
+		}
+	}
+	//constr2
+	location(int maxSeats,int noRows,const char*zone, const char* name) :id(++noLocations)
+	{
+		if (maxSeats < 0)
+		{
+			throw exception("No of max seats cannot be less than 0");
+		}
+		if (noRows < 0)
+		{
+			throw exception("No of rows cannot be less than 0");
+		}
+		this->maxSeats = maxSeats;
+		this->noRows = noRows;
+		if (zone != nullptr) 
+		{
+			strcpy_s(this->zone, strlen(zone)+1, zone);
+
+		}
+		if (name != nullptr)
+		{
+			this->name = new char[strlen(name) + 1];
+			strcpy_s(this->name, strlen(name) + 1, name);
+		}
+	}
+	//copy-constr
+	location(const location& a) :id(++noLocations)
+	{
+		this->maxSeats =a.maxSeats;
+		this->noRows = a.noRows;
+		strcpy_s(this->zone, strlen(a.zone) + 1, a.zone);
+		if (a.name != nullptr);
+		name = new char[strlen(a.name) + 1];
+		strcpy_s(this->name, strlen(a.name) + 1, a.name);
+	}
+};
 int main()
 {
 	char* p1 = new char[30];
