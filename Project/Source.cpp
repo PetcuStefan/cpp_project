@@ -8,6 +8,7 @@ private:
 	char address[40];
 	int hour;
 	int minutes;
+	bool isOutdoors;
 
 public:
 	//constr
@@ -18,14 +19,16 @@ public:
 		strcpy_s(this->address, 4, "n/a");
 		this->hour = -1;
 		this->minutes = -1;
+		this->isOutdoors = false;
 	}
-	event(const char* eventName, const char* address, int hour, int minutes)
+	event(const char* eventName, const char* address, int hour, int minutes, bool isOutdoors)
 	{
 		this->eventName = new char[strlen(eventName) + 1];
 		strcpy_s(this->eventName, strlen(eventName) + 1, eventName);
 		strcpy_s(this->address, strlen(address)+1, address);
 		this->hour = hour;
 		this->minutes = minutes;
+		this->isOutdoors = isOutdoors;
 	}
 	//copy-constr
 	event(const event& a)
@@ -42,6 +45,7 @@ public:
 		}
 		this->hour = a.hour;
 		this->minutes = a.minutes;
+		this->isOutdoors = a.isOutdoors;
 	}
 	//op=
 	event& operator=(const event& a)
@@ -63,8 +67,10 @@ public:
 		}
 		this->hour = a.hour;
 		this->minutes = a.minutes;
+		this->isOutdoors = a.isOutdoors;
 		return *this;
 	}
+	//setters
 	void setEventName(const char *newEventName)
 	{
 		if (this->eventName != nullptr)
@@ -101,6 +107,15 @@ public:
 			throw exception{ "Wrong number of minutes!!" };
 		}
 	}
+	void setOutdoors()
+	{
+		this->isOutdoors = true;
+	}
+	void setIndoors()
+	{
+		this->isOutdoors = false;
+	}
+	//getters
 	char* getEventName()
 	{
 		char *copyEventName=new char[strlen(this->eventName)+1];
@@ -121,11 +136,30 @@ public:
 	{
 		return this->minutes;
 	}
+	bool getIsOutdoors()
+	{
+		return this->isOutdoors;
+	}
+	bool operator!()
+	{
+		bool copy;
+		copy = !this->isOutdoors;
+		return copy;
+	}
+	char operator[](int index)
+	{
+		if (index<0 || index>strlen(this->eventName))
+		{
+			throw exception("Inexistent index");
+		}
+		return this->eventName[index];
+	}
 	//destr
 	~event()
 	{
 		cout << endl << "Destr" << endl;
-		delete[] eventName;
+		delete[] this->eventName;
+		this->eventName = nullptr;
 	}
 };
 class location
@@ -136,6 +170,7 @@ private:
 	int noRows;
 	char zone[10];
 	char* name;
+	bool hasParkingLot;
 	static int noLocations;
 public:
 	//setters
@@ -178,6 +213,14 @@ public:
 			strcpy_s(this->name, strlen(name) + 1, name);
 		}
 	}
+	void setParkingLot()
+	{
+		this->hasParkingLot = true;
+	}
+	void unSetParkingLot()
+	{
+		this->hasParkingLot = false;
+	}
 	//getters
 	int getId()
 	{
@@ -203,6 +246,10 @@ public:
 		strcpy_s(copy, strlen(this->name) + 1, this->name);
 		return copy;
 	}
+	bool getParkingLot()
+	{
+		return this->hasParkingLot;
+	}
 	//constr1
 	location(const char* name) :id(++noLocations)
 	{
@@ -214,9 +261,10 @@ public:
 			this->name = new char[strlen(name) + 1];
 			strcpy_s(this->name, strlen(name) + 1, name);
 		}
+		this->hasParkingLot = false;
 	}
 	//constr2
-	location(int maxSeats,int noRows,const char*zone, const char* name) :id(++noLocations)
+	location(int maxSeats,int noRows,const char*zone, const char* name, bool hasParkingLot) :id(++noLocations)
 	{
 		if (maxSeats < 0)
 		{
@@ -238,6 +286,7 @@ public:
 			this->name = new char[strlen(name) + 1];
 			strcpy_s(this->name, strlen(name) + 1, name);
 		}
+		this->hasParkingLot = hasParkingLot;
 	}
 	//copy-constr
 	location(const location& a) :id(++noLocations)
@@ -250,6 +299,7 @@ public:
 			name = new char[strlen(a.name) + 1];
 			strcpy_s(this->name, strlen(a.name) + 1, a.name);
 		}
+		this->hasParkingLot = a.hasParkingLot;
 	}
 	location& operator=(const location& a)
 	{
@@ -265,8 +315,23 @@ public:
 			}
 			name = new char[strlen(a.name) + 1];
 			strcpy_s(this->name, strlen(a.name) + 1, a.name);
+			this->hasParkingLot = a.hasParkingLot;
 		}
 		return *this;
+	}
+	bool operator!()
+	{
+		bool copy;
+		copy = !this->hasParkingLot;
+		return copy;
+	}
+	char operator[](int index)
+	{
+		if (index<0 || index>strlen(this->name))
+		{
+			throw exception("Inexistent index");
+		}
+		return this->name[index];
 	}
 	~location()
 	{
@@ -281,12 +346,5 @@ int main()
 {
 	char* p1 = new char[30];
 	char* p2 = new char[30];
-	strcpy_s(p2, 29, "str Mihail Sebastian");
-	strcpy_s(p1, 12, "bling blong");
-	event ceva(p1,p1,22,11);
-	cout << ceva.getEventName() << endl << ceva.getAddress() << endl << ceva.getHour() << ':' << ceva.getMinutes();
-	event ceva2(p2,p2,13,10);
-	ceva2 = ceva;
-	cout << ceva2.getEventName() << endl << ceva2.getAddress() << endl << ceva2.getHour() << ':' << ceva2.getMinutes();
 	return 0;
 }
