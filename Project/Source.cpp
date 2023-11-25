@@ -196,7 +196,28 @@ public:
 		}
 		return copy;
 	}
-
+	//op>
+	bool operator>(const event& a)
+	{
+		if (this->hour > a.hour)
+			return true;
+		else
+		{
+			if (this->hour == a.hour && this->minutes > a.minutes)
+				return true;
+			else
+				return false;
+		}
+	}
+	//op()
+	explicit operator float()
+	{
+		float a;
+		a = this->minutes / 60.0;
+		a += this->hour;
+		return a;
+	}
+	//op>>
 	//destr
 	~event()
 	{
@@ -204,6 +225,8 @@ public:
 		this->eventName = nullptr;
 	}
 	friend event operator++(event&);
+	friend ostream& operator<<(ostream& a, const event& b);
+	friend istream& operator>>(istream& a, event& b);
 };
 event operator+ (int value, event a)
 {
@@ -217,6 +240,39 @@ event operator++(event& a)
 		a.hour++;
 		a.minutes -= 60;
 	}
+	return a;
+}
+ostream& operator<<(ostream& a,const event& b)
+{
+	a << "Event " << b.eventName << ' ' << "is taking place on " << b.address << ' ' << "at " << b.hour << ':' << b.minutes<<'.'<<endl;
+	if (b.isOutdoors == true)
+	{
+		a << "The event is outdoors.";
+	}
+	else
+	{
+		a << "The event is indoors.";
+	}
+	return a;
+}
+istream& operator>> (istream& a, event& b)
+{
+	if (b.eventName != nullptr)
+	{
+		delete[] b.eventName;
+		b.eventName = nullptr;
+	}
+	b.eventName = new char[30];
+	cout << "Event name:";
+	a.getline(b.eventName,30);
+	cout << endl << "Address:";
+	a.getline(b.address,30);
+	cout << endl << "Hour:";
+	a >> b.hour;
+	cout << endl<<"Minutes:";
+	a >> b.minutes;
+	cout << "Is it outdoors? Type true for yes and false for no:";
+	a >> b.isOutdoors;
 	return a;
 }
 class location
@@ -423,6 +479,20 @@ public:
 		this->maxSeats += 30;
 		return copy;
 	}
+	//op>
+	bool operator> (const location& a)
+	{
+		if (this->maxSeats > a.maxSeats)
+			return true;
+		else return false;
+	}
+	//op()
+	explicit operator float()
+	{
+		float a;
+		a = maxSeats / 30.0;
+		return a;
+	}
 	~location()
 	{
 		if (this->name != nullptr)
@@ -432,6 +502,8 @@ public:
 		}
 	}
 	friend location operator++(location&);
+	friend ostream& operator<<(ostream& a, location& b);
+	friend istream& operator>>(istream& a, location& b);
 };
 int location::noLocations = 0;
 location operator+ (int value,location a)
@@ -444,15 +516,48 @@ location operator++(location &a)
 	a.maxSeats += 30;
 	return a;
 }
+ostream& operator<<(ostream& a, location& b)
+{
+	a << "Location "<<b.name<<" with ID : " << b.id<<" has "<<b.maxSeats<<" seats in "<<b.noRows<<".The zone of the location is "<<b.zone<<'.'<<endl;
+	if (b.hasParkingLot == true)
+	{
+		a << "It has a parking lot.";
+	}
+	else
+	{
+		a << "It doesn't have a parking lot.";
+	}
+	a <<endl<< "There are " << b.noLocations<<'.';
+	return a;
+}
+istream& operator>>(istream& a, location& b)
+{
+	if (b.name != nullptr)
+	{
+		delete[] b.name;
+		b.name = nullptr;
+	}
+	b.name = new char[30];
+	cout << "Name:";
+	a.getline(b.name, 30);
+	cout <<endl<< "Max no of seats:";
+	a >> b.maxSeats;
+	cout <<endl<< "No rows:";
+	a >> b.noRows;
+	cout << endl << "Zone:";
+	a >> b.zone;
+	cout << endl << "Does it have a parking lot? Type true for yes and false for no:";
+	a >> b.hasParkingLot;
+	return a;
+}
 int main()
 {
 	char* p1 = new char[30];
-	strcpy_s(p1, 4, "abc");
+	strcpy_s(p1, 20, "bling_blong");
 	char* p2 = new char[30];
-	event ceva(p1);
-	ceva.setHour(2);
-	ceva.setMinutes(20);
-	ceva = 40 + ceva;
-	cout <<ceva.getHour()<<':'<< ceva.getMinutes();
+	strcpy_s(p2, 30, "str. Mihail Sebastian");
+	location ceva;
+	cin >> ceva;
+	cout << ceva;
 	return 0;
 }
