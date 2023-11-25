@@ -165,7 +165,7 @@ public:
 		return this->eventName[index];
 	}
 	//op+
-	event operator+ (int value)
+	event& operator+ (int value)
 	{
 		event copy;
 		copy = *this;
@@ -177,16 +177,47 @@ public:
 		}
 		return copy;
 	}
+	//op==
+	bool operator==(const event& a)
+	{
+		if (strcmp(this->eventName, a.eventName) == 0 && strcmp(this->address, a.address) == 0 && this->hour == a.hour && this->minutes == a.minutes && this->isOutdoors == a.isOutdoors)
+			return true;
+		else return false;
+	}
+	//op++
+	event& operator++ (int)
+	{
+		event copy = *this;
+		this->minutes++;
+		if (this->minutes >= 60)
+		{
+			this->hour++;
+			this->minutes -= 60;
+		}
+		return copy;
+	}
+
 	//destr
 	~event()
 	{
 		delete[] this->eventName;
 		this->eventName = nullptr;
 	}
+	friend event operator++(event&);
 };
 event operator+ (int value, event a)
 {
 	return a + value;
+}
+event operator++(event& a)
+{
+	a.minutes++;
+	if (a.minutes >= 60)
+	{
+		a.hour++;
+		a.minutes -= 60;
+	}
+	return a;
 }
 class location
 {
@@ -271,6 +302,14 @@ public:
 		char* copy = new char[strlen(this->name) + 1];
 		strcpy_s(copy, strlen(this->name) + 1, this->name);
 		return copy;
+	}
+	location() :id(noLocations)
+	{
+		this->maxSeats = 0;
+		this->noRows = 0;
+		this->name = nullptr;
+		strcpy_s(this->zone, 4, "n/a");
+		this->hasParkingLot = true;
 	}
 	bool getParkingLot()
 	{
@@ -359,6 +398,31 @@ public:
 		}
 		return this->name[index];
 	}
+	//op+
+	location& operator+ (int value)
+	{
+		location copy;
+		copy = *this;
+		copy.noRows += value;
+		copy.maxSeats += (value * 30);
+		return copy;
+	}
+	//op==
+	bool operator== (const location& a)
+	{
+		if (this->maxSeats == a.maxSeats && this->noRows == a.noRows && this->hasParkingLot == a.hasParkingLot && strcmp(this->zone, a.zone) == 0 && strcmp(this->name, a.name) == 0)
+			return true;
+		else return false;
+	}
+	//op++
+	location& operator++ (int)
+	{
+		location copy;
+		copy = *this;
+		this->noRows++;
+		this->maxSeats += 30;
+		return copy;
+	}
 	~location()
 	{
 		if (this->name != nullptr)
@@ -367,7 +431,19 @@ public:
 			this->name = nullptr;
 		}
 	}
+	friend location operator++(location&);
 };
+int location::noLocations = 0;
+location operator+ (int value,location a)
+{
+	return a + value;
+}
+location operator++(location &a)
+{
+	a.noRows++;
+	a.maxSeats += 30;
+	return a;
+}
 int main()
 {
 	char* p1 = new char[30];
