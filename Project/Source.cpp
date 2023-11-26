@@ -1,6 +1,8 @@
 #include<iostream>
 #include<string>
+#include<cstring>
 using namespace std;
+//class event
 class event
 {
 private:
@@ -10,6 +12,7 @@ private:
 	int minutes;
 	bool isOutdoors;
 public:
+	//constr0
 	event()
 	{
 		this->eventName = nullptr;
@@ -319,6 +322,7 @@ istream& operator>> (istream& a, event& b)
 	a >> b.isOutdoors;
 	return a;
 }
+//class location
 class location
 {
 private:
@@ -411,6 +415,7 @@ public:
 		strcpy_s(this->zone, 4, "n/a");
 		this->hasParkingLot = true;
 	}
+	//constr0
 	bool getParkingLot()
 	{
 		return this->hasParkingLot;
@@ -573,7 +578,7 @@ ostream& operator<<(ostream& a, location& b)
 	{
 		a << "It doesn't have a parking lot.";
 	}
-	a <<endl<< "There are " << b.noLocations<<'.';
+	a <<endl<< "There are " << b.noLocations<<" locations.";
 	return a;
 }
 istream& operator>>(istream& a, location& b)
@@ -596,6 +601,296 @@ istream& operator>>(istream& a, location& b)
 	a >> b.hasParkingLot;
 	return a;
 }
+//class user
+class user
+{
+private:
+	const int id;
+	bool isAdmin;
+	char* name = nullptr;
+	char password[20] = {"n/a"};
+	int noTickets;
+	float balance;
+	static int noUsers;
+public:
+	//constr0
+	user():id(++noUsers)
+	{
+		this->isAdmin = 0;
+		this->name=new char[4];
+		strcpy_s(this->name, 4, "n/a");
+		strcpy_s(this->password, 4, "n/a");
+		this->noTickets = 0;
+		this->balance = 0;
+	}
+	//constr1
+	user(bool isAdmin):id(++noUsers)
+	{
+		this->isAdmin = isAdmin;
+		this->name = new char[4];
+		strcpy_s(this->name, 4, "n/a");
+		strcpy_s(this->password, 4, "n/a");
+		this->noTickets = 0;
+		this->balance = 0;
+	}
+	//constr2
+	user(bool isAdmin, const char* name, const char* password) :id(++noUsers)
+	{
+		this->isAdmin = isAdmin;
+		this->name = new char[strlen(name) + 1];
+		strcpy_s(this->name, strlen(name) + 1, name);
+		strcpy_s(this->password, strlen(password) + 1, password);
+		this->noTickets = 0;
+		this->balance = 0;
+	}
+	//copy-constr
+	user(const user& a) :id(++noUsers)
+	{
+		this->isAdmin = a.isAdmin;
+		this->name = new char[strlen(a.name) + 1];
+		strcpy_s(this->name, strlen(a.name) + 1, a.name);
+		strcpy_s(this->password, strlen(a.password) + 1, a.password);
+		this->noTickets = a.noTickets;
+		this->balance = a.balance;
+	}
+	//op=
+	user& operator=(const user& a)
+	{
+		this->isAdmin = a.isAdmin;
+		if (this->name != nullptr)
+		{
+			delete[] this->name;
+			this->name = nullptr;
+		}
+		this->name = new char[strlen(a.name) + 1];
+		strcpy_s(this->name, strlen(a.name) + 1, a.name);
+		strcpy_s(this->password, strlen(a.password) + 1, a.password);
+		this->noTickets = a.noTickets;
+		this->balance = a.balance;
+		return *this;
+	}
+	//setters
+	void getAdmin()
+	{
+		this->isAdmin = true;
+	}
+	void notGetAdmin()
+	{
+		this->isAdmin = false;
+	}
+	void setName(char* name)
+	{
+		if (this->name != nullptr)
+		{
+			delete[] this->name;
+			this->name = nullptr;
+		}
+		this->name = new char[strlen(name) + 1];
+		strcpy_s(this->name, strlen(name) + 1, name);
+	}
+	void setPassword(char* password)
+	{
+		int code[4] = {0,0,0,0};
+		for (int i = 0; i < strlen(password);i++)
+		{
+			if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", password[i]) != nullptr)
+			{
+				code[0] = 1;
+			}
+			if (strchr("abcdefghijklmnopqrstuvwxyz", password[i]) != nullptr)
+			{
+				code[1] = 1;
+			}
+			if (strchr(".&*^%$#@!`~?'-_", password[i]) != nullptr)
+			{
+				code[2] = 1;
+			}
+			if (strchr("0123456789", password[i]) != nullptr)
+			{
+				code[3] = 1;
+			}
+		}
+		if (code[0] == 0)
+		{
+			throw exception("Password must contain an upper-case character!");
+		}
+		if (code[1] == 0)
+		{
+			throw exception("Password must contain a lower-case character!");
+		}
+		if (code[2] == 0)
+		{
+			throw exception("Password must contain a special character from: .&*^%$#@!`~?'-_ !");
+		}
+		if (code[3] == 0)
+		{
+			throw exception("Password must contain a number!");
+		}
+		if (strlen(password) < 14)
+		{
+			throw exception("Password must have at least 14 characters!");
+		}
+		strcpy_s(this->password, strlen(password) + 1, password);
+	}
+	void setNoTickets(int noTickets)
+	{
+		if (noTickets < 0)
+		{
+			throw exception("No tickets must be a positive number!");
+		}
+		this->noTickets = noTickets;
+	}
+	void setBalance(int balance)
+	{
+		this->balance = balance;
+	}
+	//getters
+	int getId()
+	{
+		return this->id;
+	}
+	bool checkIsAdmin()
+	{
+		return this->isAdmin;
+	}
+	char* getName()
+	{
+		char* copy = new char[strlen(this->name) + 1];
+		strcpy_s(copy, strlen(name) + 1, this->name);
+		return copy;
+	}
+	char* getPassword()
+	{
+		char* copy = new char[strlen(this->password) + 1];
+		strcpy_s(copy, strlen(this->password) + 1, this->password);
+		return copy;
+	}
+	int getNoTickets()
+	{
+		return this->noTickets;
+	}
+	int getBalance()
+	{
+		return this->balance;
+	}
+	int getNoUsers()
+	{
+		return this->noUsers;
+	}
+	//op!
+	bool operator! ()
+	{
+		bool copy;
+		copy = !this->isAdmin;
+		return copy;
+	}
+	// op[]
+	char operator[] (int index)
+	{
+		if (index<0 || index>strlen(this->name))
+		{
+			throw exception("Inexistent Index!");
+		}
+		char a;
+		a=this->name[index];
+		return a;
+	}
+	// op+
+	user& operator+(int value)
+	{
+		user copy = *this;
+		copy.balance += value;
+		return copy;;
+	}
+	// op++
+	user& operator++(int)
+	{
+		user copy = *this;
+		this->noTickets++;
+		return copy;
+	}
+	// op()
+	explicit operator int()
+	{
+		int a;
+		a = this->balance;
+		return a;
+	}
+	// op>
+	bool operator>(const user& a)
+	{
+		if (this->balance > a.balance)
+			return true;
+		else return false;
+	}
+	// op==
+	bool operator==(const user& a)
+	{
+		if (this->balance == a.balance && this->noTickets == a.noTickets && strcmp(this->name, a.name) == 0)
+			return true;
+		else return false;
+	}
+	//generic method 1
+	
+	//generic method 2
+
+	friend user operator++(user& a);
+	friend istream& operator>>(istream& a, user& b);
+	friend ostream& operator<<(ostream& a, user& b);
+	//destruct
+	~user()
+	{
+		if (this->name != nullptr)
+		{
+			delete[] this->name;
+			this->name = nullptr;
+		}
+	}
+};
+int user::noUsers = 0;
+user operator+(int value,user& a)
+{
+	return a + value;
+}
+user operator++(user& a)
+{
+	a.noTickets++;
+	return a;
+}
+istream& operator>>(istream& a, user& b)
+{
+	cout << "Name:";
+	if (b.name != nullptr)
+	{
+		delete[] b.name;
+		b.name = nullptr;
+	}
+	b.name = new char[30];
+	a.getline(b.name, 30);
+	cout << endl << "Password:";
+	a.getline(b.password, 30);
+	cout << endl << "No of tickets:";
+	a >> b.noTickets;
+	cout << endl << "Balance:";
+	a >> b.balance;
+	cout << endl << "Is admin? Type true for yes and false for no:";
+	a >> b.isAdmin;
+	return a;
+}
+ostream& operator<<(ostream& a, user& b)
+{
+	a << endl << "User " << b.name << " with id: " << b.id << " has password " << b.password << ", balance: " << b.balance << ", no of tickets: " << b.noTickets;
+	if (b.isAdmin == true)
+	{
+		a << endl << "He/She is an admin";
+	}
+	else
+	{
+		a << endl << "He/She is not an admin";
+	}
+	a << endl << "There are " << b.noUsers << " users.";
+	return a;
+}
 int main()
 {
 	char* p1 = new char[30];
@@ -603,8 +898,5 @@ int main()
 	char* p2 = new char[30];
 	strcpy_s(p2, 30, "str. Mihail Sebastian");
 	event ceva;
-	cin >> ceva;
-	cout << ceva<<endl;
-	cout << ceva.abbreviation(ceva);
 	return 0;
 }
