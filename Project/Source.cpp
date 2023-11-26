@@ -543,7 +543,21 @@ public:
 		return a;
 	}
 	//generic method 1
+	void checkParkingLot()
+	{
+		if (this->maxSeats > 30 && this->hasParkingLot == false)
+		{
+			cout << "It may be difficult to find a parking spot.";
+		}
+		else cout << "There shouldn't be any problem finding a parking spot.";
+	}
 	//generic method 2
+	int noSeatsPerRow()
+	{
+		int a;
+		a=this->maxSeats / this->noRows;
+		return a;
+	}
 	~location()
 	{
 		if (this->name != nullptr)
@@ -831,9 +845,46 @@ public:
 		else return false;
 	}
 	//generic method 1
-	
+	void changePassword()
+	{
+		char* copy = new char[strlen(this->password) + 1];
+		cout << "Enter password:";
+		cin.get(copy,strlen(this->password)+1);
+		if (strcmp(copy, this->password) == 0)
+		{
+			if (copy != nullptr)
+			{
+				delete[] copy;
+				copy = nullptr;
+			}
+			char* buffer = new char[50];
+			cout <<endl<< "Enter new password:";
+			cin.ignore();
+			cin.getline(buffer, 50);
+			copy = new char[strlen(buffer) + 1];
+			strcpy_s(copy, strlen(buffer) + 1, buffer);
+			if (buffer != nullptr)
+			{
+				delete[] buffer;
+				buffer = nullptr;
+			}
+			this->setPassword(copy);
+		}
+	}
 	//generic method 2
-
+	void checkBalance()
+	{
+		if (this->balance < 0)
+		{
+			float b;
+			b = abs(this->balance);
+			cout << "This user owes "<<b<<" RON.";
+		}
+		else
+		{
+			cout << "This user owes 0 RON.";
+		}
+	}
 	friend user operator++(user& a);
 	friend istream& operator>>(istream& a, user& b);
 	friend ostream& operator<<(ostream& a, user& b);
@@ -897,6 +948,15 @@ int main()
 	strcpy_s(p1, 20, "bling_blong");
 	char* p2 = new char[30];
 	strcpy_s(p2, 30, "str. Mihail Sebastian");
-	event ceva;
+	location a(40, 2, "sdad", "sdfffdf", false);
+	a.checkParkingLot();
+	cout <<endl<< a.noSeatsPerRow();
+	cout << endl;
+	user PetcuStefan(true,"Petcu Stefan","#petcuStefan22");
+	PetcuStefan.changePassword();
+	cout<<endl<<PetcuStefan.getPassword();
+	cout << endl;
+	PetcuStefan.setBalance(-30);
+	PetcuStefan.checkBalance();
 	return 0;
 }
