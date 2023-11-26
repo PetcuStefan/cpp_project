@@ -4,12 +4,11 @@ using namespace std;
 class event
 {
 private:
-	char* eventName;
-	char address[40];
+	char* eventName=nullptr;
+	char address[40] = {};
 	int hour;
 	int minutes;
 	bool isOutdoors;
-
 public:
 	event()
 	{
@@ -217,14 +216,59 @@ public:
 		a += this->hour;
 		return a;
 	}
-	//op>>
+	//generic method 1
+	int countWords(const event& a)
+	{
+		int counter=0;
+		if (a.eventName != nullptr)
+		{
+			counter = 1;
+		}
+		else
+		{
+			return 0;
+		}
+		for (int i = 0;i < strlen(a.eventName);i++)
+		{
+			if (a.eventName[i] == '-' || a.eventName[i] == '_' || a.eventName[i] == ' ' || a.eventName[i] == '.')
+				counter++;
+			if((a.eventName[i]>='a'&&a.eventName[i]<='z')&&(a.eventName[i+1]>='A'&&a.eventName[i+1]<='Z'))
+				counter++;
+		}
+		return counter;
+	}
+	//generic method 2
+	char* abbreviation(const event& a)
+	{
+		char* copy = new char[countWords(a.eventName) + 1];
+		copy[0] = toupper(a.eventName[0]);
+		copy[1] = '\0';
+		char c0py[2];
+		c0py[1] = '\0';
+		for (int i = 1;i < strlen(a.eventName);i++)
+		{
+			if (a.eventName[i] == '-' || a.eventName[i] == '_' || a.eventName[i] == ' ' || a.eventName[i] == '.')
+			{
+				c0py[0] = a.eventName[i+1];
+				c0py[0]=toupper(c0py[0]);
+				strcat(copy, c0py);
+			}
+			if ((a.eventName[i] >= 'a' && a.eventName[i] <= 'z') && (a.eventName[i + 1] >= 'A' && a.eventName[i + 1] <= 'Z'))
+			{
+				c0py[0] = a.eventName[i + 1];
+				strcat(copy, c0py);
+			}
+		}
+		copy[countWords(a.eventName) + 1] = '\0';
+		return copy;
+	}
 	//destr
 	~event()
 	{
 		delete[] this->eventName;
 		this->eventName = nullptr;
 	}
-	friend event operator++(event&);
+	friend event operator++(event& a);
 	friend ostream& operator<<(ostream& a, const event& b);
 	friend istream& operator>>(istream& a, event& b);
 };
@@ -281,8 +325,8 @@ private:
 	const int id;
 	int maxSeats;
 	int noRows;
-	char zone[10];
-	char* name;
+	char zone[10] = {};
+	char* name=nullptr;
 	bool hasParkingLot;
 	static int noLocations;
 public:
@@ -493,6 +537,8 @@ public:
 		a = maxSeats / 30.0;
 		return a;
 	}
+	//generic method 1
+	//generic method 2
 	~location()
 	{
 		if (this->name != nullptr)
@@ -556,8 +602,9 @@ int main()
 	strcpy_s(p1, 20, "bling_blong");
 	char* p2 = new char[30];
 	strcpy_s(p2, 30, "str. Mihail Sebastian");
-	location ceva;
+	event ceva;
 	cin >> ceva;
-	cout << ceva;
+	cout << ceva<<endl;
+	cout << ceva.abbreviation(ceva);
 	return 0;
 }
