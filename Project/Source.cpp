@@ -885,6 +885,22 @@ public:
 			cout << "This user owes 0 RON.";
 		}
 	}
+	void login()
+	{
+		string name, password;
+		cout << "Enter name:";
+		cin >> name;
+		cout << "Password:";
+		cin >> password;
+		if (name==this->name && password == this->password)
+		{
+			cout << "LOGIN SUCCESSFUL!";
+		}
+		else
+		{
+			cout << "WRONG PASSWORD!";
+		}
+	}
 	friend user operator++(user& a);
 	friend istream& operator>>(istream& a, user& b);
 	friend ostream& operator<<(ostream& a, user& b);
@@ -942,21 +958,9 @@ ostream& operator<<(ostream& a, user& b)
 	a << endl << "There are " << b.noUsers << " users.";
 	return a;
 }
+
 int main()
 {
-	char* p1 = new char[30];
-	strcpy_s(p1, 20, "bling_blong");
-	char* p2 = new char[30];
-	strcpy_s(p2, 30, "str. Mihail Sebastian");
-	location a(40, 2, "sdad", "sdfffdf", false);
-	a.checkParkingLot();
-	cout <<endl<< a.noSeatsPerRow();
-	cout << endl;
-	user PetcuStefan(true,"Petcu Stefan","#petcuStefan22");
-	PetcuStefan.changePassword();
-	cout<<endl<<PetcuStefan.getPassword();
-	cout << endl;
-	PetcuStefan.setBalance(-30);
-	PetcuStefan.checkBalance();
+
 	return 0;
 }
