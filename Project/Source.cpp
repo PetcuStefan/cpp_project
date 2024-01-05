@@ -271,6 +271,26 @@ public:
 		delete[] this->eventName;
 		this->eventName = nullptr;
 	}
+	void addEvent()
+	{
+		string name;
+		char address[40];
+		int hour, minutes;
+		bool isOutdoors;
+		cout <<endl<<"Event name:";
+		getline(cin, name);
+		cin.ignore();
+		cout << endl << "Event address:";
+		cin.get(address, 40);
+		cin.get();
+		cout << endl << "Hour:";
+		cin >> hour;
+		cout << endl << "Minutes:";
+		cin >> minutes;
+		cout << endl << "Is it outdoors? Type true for yes and false for no.";
+		cin >> isOutdoors;
+		event a(name.c_str(), address, hour, minutes, isOutdoors);
+	}
 	friend event operator++(event& a);
 	friend ostream& operator<<(ostream& a, const event& b);
 	friend istream& operator>>(istream& a, event& b);
@@ -900,6 +920,15 @@ public:
 		{
 			cout << "WRONG PASSWORD!";
 		}
+	}
+	void addUser()
+	{
+		cout << endl << "Name:";
+		string name, password;
+		getline(cin, name);
+		cin.ignore();
+		cin >> password;
+		user b(false, name.c_str(), password.c_str());
 	}
 	friend user operator++(user& a);
 	friend istream& operator>>(istream& a, user& b);
