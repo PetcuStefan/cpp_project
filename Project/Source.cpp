@@ -5,7 +5,7 @@ using namespace std;
 //class event
 class event
 {
-private:
+protected:
 	char* eventName=nullptr;
 	char address[40] = {};
 	int hour;
@@ -345,7 +345,7 @@ istream& operator>> (istream& a, event& b)
 //class location
 class location
 {
-private:
+protected:
 	const int id;
 	int maxSeats;
 	int noRows;
@@ -987,7 +987,16 @@ ostream& operator<<(ostream& a, user& b)
 	a << endl << "There are " << b.noUsers << " users.";
 	return a;
 }
+class show
+{
+	event a;
+	location b;
+public:
+	void pickShow()
+	{
 
+	}
+};
 int main()
 {
 
