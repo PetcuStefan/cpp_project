@@ -1,6 +1,7 @@
 #include<iostream>
 #include<string>
 #include<cstring>
+#include<fstream>
 using namespace std;
 //class event
 class event
@@ -764,6 +765,10 @@ public:
 		{
 			throw exception("Password must have at least 14 characters!");
 		}
+		if (code[1] == 1 && code[2] == 1 && code[3] == 1 && code[0] == 1 && strlen(password) >= 14)
+		{
+			cout << endl << "Password set successfully!";
+		}
 		strcpy_s(this->password, strlen(password) + 1, password);
 	}
 	void setNoTickets(int noTickets)
@@ -878,7 +883,7 @@ public:
 				copy = nullptr;
 			}
 			char* buffer = new char[50];
-			cout <<endl<< "Enter new password:";
+			cout << endl << "Enter new password:";
 			cin.ignore();
 			cin.getline(buffer, 50);
 			copy = new char[strlen(buffer) + 1];
@@ -890,6 +895,29 @@ public:
 			}
 			this->setPassword(copy);
 		}
+	}
+	void setPassword2()
+	{
+		char* copy = new char[strlen(this->password) + 1];
+		char* buffer = new char[50];
+		cout << endl << "Enter new password:";
+		cin.getline(buffer, 50);
+		copy = new char[strlen(buffer) + 1];
+		strcpy_s(copy, strlen(buffer) + 1, buffer);
+		if (buffer != nullptr)
+		{
+			delete[] buffer;
+			buffer = nullptr;
+		}
+		try 
+		{
+			this->setPassword(copy);
+		}
+		catch (const exception& e)
+		{
+			cerr << "ERROR" <<endl<< e.what() << endl;
+		}
+		cout << endl << this->getPassword();
 	}
 	//generic method 2
 	void checkBalance()
@@ -926,9 +954,12 @@ public:
 		cout << endl << "Name:";
 		string name, password;
 		getline(cin, name);
-		cin.ignore();
-		cin >> password;
-		user b(false, name.c_str(), password.c_str());
+		user b(false,name.c_str(),"n/a");
+		b.setPassword2();
+		ofstream file;
+		file.open(name + ".txt");
+		file << name << endl << password;
+		file.close();
 	}
 	friend user operator++(user& a);
 	friend istream& operator>>(istream& a, user& b);
@@ -997,8 +1028,43 @@ public:
 
 	}
 };
+class menu
+{
+	user a;
+public:
+	void start()
+	{
+		int input;
+		cout << "Hello! Type 1 for login into an account, 2 to register a new account,or 0 to exit!";
+		while (cin >> input)
+		{
+			cin.ignore();
+			if (input==0||input == 1 || input == 2)
+			{
+				if (input == 1)
+				{
+					a.login();
+				}
+				if (input == 2)
+				{
+					a.addUser();
+				}
+				if (input == 0)
+				{
+					cout << "GOODBYE!";
+					break;
+				}
+			}
+			else
+			{
+				cout << endl << "Invalid input!";
+			}
+		}
+	}
+};
 int main()
 {
-
+	menu a;
+	a.start();
 	return 0;
 }
