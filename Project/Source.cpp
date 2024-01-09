@@ -933,33 +933,54 @@ public:
 			cout << "This user owes 0 RON.";
 		}
 	}
-	void login()
+	bool login()
 	{
 		string name, password;
+		string username, pass;
 		cout << "Enter name:";
-		cin >> name;
+		getline(cin,name);
 		cout << "Password:";
 		cin >> password;
-		if (name==this->name && password == this->password)
+		ifstream read(name + ".txt");
+		getline(read, username);
+		getline(read, pass);
+		if (name == username && password == pass)
 		{
-			cout << "LOGIN SUCCESSFUL!";
+			return true;
 		}
-		else
-		{
-			cout << "WRONG PASSWORD!";
-		}
+		else return false;
 	}
 	void addUser()
 	{
 		cout << endl << "Name:";
+		int code=1;
 		string name, password;
 		getline(cin, name);
 		user b(false,name.c_str(),"n/a");
-		b.setPassword2();
-		ofstream file;
-		file.open(name + ".txt");
-		file << name << endl << password;
-		file.close();
+		cout << endl << "Password:";
+		getline(cin, password);
+		char* pass=new char[30];
+		strcpy(pass, password.c_str());
+		try
+		{
+			b.setPassword(pass);
+		}
+		catch (const exception& e)
+		{
+			cerr << "ERROR" << endl << e.what() << endl;
+			code = 0;
+		}
+		if (code == 1)
+		{
+			ofstream file;
+			file.open(name + ".txt");
+			file << b.name << endl << b.password;
+			file.close();
+		}
+		else
+		{
+			cout << endl << "Try again, type 1 for login into an account, 2 to register a new account,or 0 to exit!";
+		}
 	}
 	friend user operator++(user& a);
 	friend istream& operator>>(istream& a, user& b);
@@ -1043,7 +1064,14 @@ public:
 			{
 				if (input == 1)
 				{
-					a.login();
+					if (a.login() == true)
+					{
+						cout << "Your are logged in.";
+					}
+					else
+					{
+						cout << "Wrong password or name!Try again, type 1 for login into an account, 2 to register a new account,or 0 to exit!";
+					}
 				}
 				if (input == 2)
 				{
