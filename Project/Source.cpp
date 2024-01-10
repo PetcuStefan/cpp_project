@@ -896,29 +896,6 @@ public:
 			this->setPassword(copy);
 		}
 	}
-	void setPassword2()
-	{
-		char* copy = new char[strlen(this->password) + 1];
-		char* buffer = new char[50];
-		cout << endl << "Enter new password:";
-		cin.getline(buffer, 50);
-		copy = new char[strlen(buffer) + 1];
-		strcpy_s(copy, strlen(buffer) + 1, buffer);
-		if (buffer != nullptr)
-		{
-			delete[] buffer;
-			buffer = nullptr;
-		}
-		try 
-		{
-			this->setPassword(copy);
-		}
-		catch (const exception& e)
-		{
-			cerr << "ERROR" <<endl<< e.what() << endl;
-		}
-		cout << endl << this->getPassword();
-	}
 	//generic method 2
 	void checkBalance()
 	{
@@ -933,7 +910,7 @@ public:
 			cout << "This user owes 0 RON.";
 		}
 	}
-	bool login()
+	bool login(int ticketId)
 	{
 		string name, password;
 		string username, pass;
@@ -946,6 +923,10 @@ public:
 		getline(read, pass);
 		if (name == username && password == pass)
 		{
+			user a(false, name.c_str(), password.c_str());
+			ofstream file("ticket.txt");
+			file << a.getName();
+			file.close();
 			return true;
 		}
 		else return false;
@@ -979,7 +960,7 @@ public:
 		}
 		else
 		{
-			cout << endl << "Try again, type 1 for login into an account, 2 to register a new account,or 0 to exit!";
+			cout << endl << "Try again, type 1 for login into an account, 2 to register a new account,or 0 to exit:";
 		}
 	}
 	friend user operator++(user& a);
@@ -1049,14 +1030,51 @@ public:
 
 	}
 };
+//class seat
+//{
+//	int noSeat;
+//	int maxSeats;
+//public:
+//	bool isAvailable = true;
+//	seat()
+//	{
+//		this->noSeat = 0;
+//		this->maxSeats = 0;
+//		this->isAvailable = true;
+//	}
+//	seat(int noSeat,int maxSeats)
+//	{
+//		this->maxSeats = maxSeats;
+//		if (noSeat > maxSeats||noSeat<1)
+//		{
+//			this->noSeat = noSeat;
+//		}
+//		else
+//		{
+//			throw exception{ "Seat is out of range!" };
+//		}
+//	}
+//	void setAvailable()
+//	{
+//		isAvailable = true;
+//	}
+//	void setUnAvailable()
+//	{
+//		isAvailable = false;
+//	}
+//};
 class menu
 {
 	user a;
+	int seat[3] = {0,0,0};
 public:
 	void start()
 	{
+		int ticketId = 0;
+		bool isLogged = false;
 		int input;
-		cout << "Hello! Type 1 for login into an account, 2 to register a new account,or 0 to exit!";
+		bool isAvailable = true;
+		cout << "Hello! Type 1 for login into an account, 2 to register a new account,or 0 to exit:";
 		while (cin >> input)
 		{
 			cin.ignore();
@@ -1064,13 +1082,15 @@ public:
 			{
 				if (input == 1)
 				{
-					if (a.login() == true)
+					++ticketId;
+					if (a.login(ticketId) == true)
 					{
 						cout << "Your are logged in.";
+						isLogged = true;
 					}
 					else
 					{
-						cout << "Wrong password or name!Try again, type 1 for login into an account, 2 to register a new account,or 0 to exit!";
+						cout << "Wrong password or name!Try again, type 1 for login into an account, 2 to register a new account,or 0 to exit:";
 					}
 				}
 				if (input == 2)
@@ -1086,6 +1106,44 @@ public:
 			else
 			{
 				cout << endl << "Invalid input!";
+			}
+			location locations[3] = {
+				{300,10,"BUCURESTI","Cinema",true},
+				{1000,40,"BUCURESTI","Arena",true},
+				{100,5,"BUCURESTI","OPERA",false},
+			};
+			if (isLogged == true)
+			{
+				cout << endl << "Choose location, type 1 for Cinema, type 2 for Arena, type 3 for Opera, type 0 to exit:";
+				cin >> input;
+				if (input == 0)
+				{
+					break;
+				}
+				else
+				{
+					if (input >= 1 && input < 4)
+					{
+						cout << endl << "For " << locations[input - 1].getName() << " there are " << locations[input - 1].getMaxSeats()-(++seat[input-1]) << " seats!";
+						cout << endl;
+						if (seat[input - 1] > locations[input - 1].getMaxSeats())
+						{
+							cout << "There are no seats available!";
+						}
+						ofstream file("ticket.txt", ios::app);
+						file << endl << "Location:" << locations[input - 1].getName();
+						file << endl << "Zone:"<<locations[input-1].getZone();
+						file << endl << "Seat:" << seat[input - 1];
+						file << endl << "Row:" << seat[input - 1] / locations[input - 1].getNoRows()+1;
+						if (locations[input - 1].getParkingLot() == true)
+							file << endl << "It has a parking lot!";
+						else
+							file << endl << "It doesn't have a parking lot!";
+						file.close();
+					}
+
+				}
+				cout << endl << "Type 1 for login into an account, 2 to register a new account,or 0 to exit:";
 			}
 		}
 	}
